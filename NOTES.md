@@ -2307,9 +2307,102 @@ weights alone — the rescue-exclusion fix also improved cash efficiency),
 min money **$34,702**, avg **$42,462**. `main.py` rebuilt, compiles
 clean.
 
-**Update:** submitted as `v29` (id `55527409`), `PENDING`. 1 submission
-remaining today. Also backed up the whole project to GitHub
+**Update:** submitted as `v29` (id `55527409`), `COMPLETE`, publicScore
+590.8 — highest all session. Pulled 19 public real episodes: 10W-9L
+(52.6%, up from v28's 47.8%). Also backed up the whole project to GitHub
 (`github.com/Alphine/kaggleculture`, SSH) as a separate ask this
 session — source, tests, tools, NOTES.md pushed; `replays/` (~1GB,
 regeneratable via the Kaggle API) intentionally excluded via
 `.gitignore`.
+
+## v29 (continued) — investigated a late-game "empty land" pattern; hypothesis tested and REJECTED, no change applied
+
+All 19 v29 replays showed the same shape: empty tiles low (0-8) through
+day ~19-20, then growing every single game afterward (up to 34-38/100 by
+day 29). Hypothesized cause: trial 351 cut `TASK_SCORE_WEIGHTS["value"]`
+~3x while raising `["urgency"]` ~11x, so PLANT (urgency=1, same baseline
+as routine WATER/CARE) increasingly loses the scoring competition once
+the farm is fully staffed (9 animals needing daily CARE) — worsened by
+`scale_end` dropping from 27 to 19, stretching "endgame" to ~10 days
+instead of ~2-3.
+
+**Tested the fix (`PLANT_URGENCY = 2`, matching HARVEST's urgency) with
+a controlled local A/B before touching anything else** — and it made
+things dramatically WORSE, not better: 15-seed `pass` sweep min money
+$39,948 -> $27,846, avg $43,011 -> $29,451, avg empty-tiles-at-day-29
+5.9 -> 24.0. Likely cause: PLANT now competing evenly with HARVEST
+(also urgency=2) let planting occasionally beat out harvesting itself,
+delaying revenue. Reverted immediately (`git stash drop`) — never
+committed.
+
+**Re-examined the premise**: pure v29 (unmodified) against BOTH scripted
+opponents (8 episodes each, competitive, not passive `pass`) shows
+empty-tiles averaging only 6.5-6.9 (max 10-11) — nothing like the
+34-38 seen in a couple of real matches. Traced the worst real case
+(episode-93318792, empty=38) day-by-day: empty was ALREADY 14-21 from
+day 10-19, well before "endgame" even started at day 20 — contradicting
+the phase-boundary-length theory. Weeds stayed low (0-3) the whole
+game, hands stayed at 5, animals filled to 9 — this specific match's
+land underuse doesn't fit the hypothesized global mechanism at all.
+
+**Verdict: no fix applied.** The global "value vs urgency" theory failed
+its own predicted fix, and the milder version of the pattern doesn't
+reproduce locally against either scripted opponent at anywhere near the
+severity seen in 1-2 real matches — this looks like an opponent-specific
+interaction (a real opponent doing something our scripted proxies
+don't) rather than a systemic weight-tuning flaw. v29 as submitted
+remains the best validated state; flagging this as an open question for
+a future, more targeted investigation (ideally once more real replays
+showing the same extreme pattern are available to compare against) —
+not a diagnosed bug with a known fix yet.
+
+## Rocket Turtle round 2 — refined local search around trial 351, across 5 parallel platforms, found nothing that survives large-sample re-validation
+
+Instead of another blind wide search, round 2 perturbed trial 351's own
+values locally (urgency/value/distance ±50%, hold-floors ±0.15,
+phase boundaries ±2-8 days, `scale_end` deliberately widened upward
+toward the pre-v29 default of 27 to test whether that eases the
+late-game land-utilization pattern flagged above) — baseline frozen as
+the CURRENT `kaggriculture/` (v29, trial 351 + rescue-exclusion fix).
+
+Ran across genuinely parallel *grid computing*, not just multiple
+Kaggle kernels: 4 Kaggle CPU kernels (batch-session cap is 5 concurrent,
+confirmed via Kaggle's own product-feedback page) totaling 2,044 trials,
+plus — since `google-colab-cli`'s official headless mode
+(`googlecolab/google-colab-cli` on GitHub) turned out to need
+POSIX-only `termios` and doesn't run on native Windows (confirmed by
+directly installing and hitting `ModuleNotFoundError: No module named
+'termios'`; Docker was ruled out too, since Docker Desktop on Windows
+just runs Linux containers via a WSL2 backend anyway, no simpler than
+installing WSL directly) — a same-source `.ipynb` handed to the user to
+run manually in Google Colab (own RNG seed range, zero collision risk:
+every trial is self-contained, results just concatenate), adding 286
+more trials. **2,330 trials total across 5 independent compute nodes.**
+
+135 candidates hit a perfect win_rate_vs_baseline==1.0 in-notebook
+(8 episodes) with >=0.66 vs both scripted opponents. Re-validated the
+top 4 by margin with 15 head-to-head episodes each vs the REAL current
+v29 agent (not the notebook's small sample) — same discipline that
+caught trial 217:
+
+| candidate | notebook (n=8) | re-check (n=15) |
+|---|---|---|
+| b/645 | 100%, +6,203 | 13.3%, **-2,027** |
+| d/325 | 100%, +6,187 | 53.3%, +68 (~coin flip) |
+| c/185 | 100%, +5,908 | 13.3%, **-1,350** |
+| b/75  | 100%, +5,906 | 6.7%, **-1,938** |
+
+**All 4 failed.** Notably, all of round 2's top candidates clustered at
+or near the search's own bounds (`urgency` pinned at 300, `distance`
+pinned at 10, `value` pinned near the 0.1 floor) — extreme parameter
+combinations are inherently higher-variance strategies, exactly the
+kind that can luck into a perfect small-sample score without holding up
+under more games.
+
+**Verdict: no change applied.** Round 2 found no candidate that beats
+the current agent under real scrutiny — trial 351 looks like it's at or
+very near a local optimum for this search radius. `kaggriculture/
+config.py` stays as-is (v29, unchanged). Confirms the process is doing
+its job: catching overfit "wins" before they ever reach
+`kaggriculture/config.py`, even at the cost of a round that produced no
+usable improvement.

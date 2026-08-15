@@ -1,0 +1,6 @@
+('episode-92999099-replay.json', 10914, 59915, 5.5, 12, 50, 2, 2, 'CATASTROPHIC-WEEDS')
+('episode-93000978-replay.json', 22181, 72121, 3.3, 8, 50, 2, 3, 'CATASTROPHIC-WEEDS')
+('episode-93001932-replay.json', 7555, 24671, 3.3, 1, 25, 1, 0, 'UNDERUTILIZED-LAND')
+('episode-93004771-replay.json', 25454, 55478, 2.2, 4, 25, 1, 3, 'CATASTROPHIC-WEEDS')
+('episode-93005765-replay.json', 18300, 20577, 1.1, 9, 50, 2, 6, 'CATASTROPHIC-WEEDS')
+('episode-93006690-replay.json', 1936, 27085, 14.0, 1, 25, 1, 0, 'UNDERUTILIZED-LAND')

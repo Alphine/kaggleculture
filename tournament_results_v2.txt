@@ -1,0 +1,432 @@
+OpenSpiel exception: Unknown game 'universal_poker'. Available games are:
+2048
+add_noise
+amazons
+amazons_proxy
+ant_foraging_arena
+antichess
+backgammon
+backgammon_proxy
+banqi
+bargaining
+bargaining_proxy
+battleship
+blackjack
+blotto
+breakthrough
+breakthrough_proxy
+bridge
+bridge_arena
+bridge_uncontested_bidding
+cached_tree
+capture_the_flag
+capture_the_flag_proxy
+catch
+chat_game
+checkers
+checkers_proxy
+chess
+chinese_checkers
+cliff_walking
+clobber
+clobber_proxy
+coin_game
+coin_game_arena
+coin_game_proxy
+colored_trails
+connect_four
+connect_four_proxy
+coop_box_pushing
+coop_to_1p
+coordinated_mp
+crazy_eights
+crazyhouse
+cribbage
+crossword
+cursor_go
+dark_chess
+dark_hex
+dark_hex_ir
+dark_hex_proxy
+deep_sea
+dots_and_boxes
+dots_and_boxes_proxy
+dou_dizhu
+efg_game
+einstein_wurfelt_nicht
+euchre
+first_sealed_auction
+gin_rummy
+gin_rummy_proxy
+go
+go_fish
+go_fish_proxy
+go_proxy
+gomoku
+goofspiel
+havannah
+havannah_proxy
+hearts
+hex
+hive
+hive_proxy
+kriegspiel
+kuhn_poker
+laser_tag
+latent_ttt
+leduc_poker
+lewis_signaling
+liars_dice
+liars_dice_ir
+lines_of_action
+lines_of_action_proxy
+maedn
+mancala
+mancala_proxy
+markov_soccer
+markov_soccer_proxy
+matching_pennies_3p
+matrix_bos
+matrix_brps
+matrix_cd
+matrix_coordination
+matrix_mp
+matrix_pd
+matrix_rps
+matrix_rpsw
+matrix_sh
+matrix_shapleys_game
+mfg_crowd_modelling
+mfg_crowd_modelling_2d
+mfg_dynamic_routing
+mfg_garnet
+misere
+mnk
+morpion_solitaire
+negotiation
+negotiation_proxy
+nfg_game
+nim
+nine_mens_morris
+nine_mens_morris_proxy
+normal_form_extensive_game
+oh_hell
+oshi_zumo
+oshi_zumo_proxy
+othello
+othello_proxy
+oware
+pathfinding
+pentago
+phantom_go
+phantom_ttt
+phantom_ttt_ir
+pig
+python_ant_foraging
+python_ant_foraging_proxy
+python_block_dominoes
+python_dynamic_routing
+python_hangman
+python_iterated_prisoners_dilemma
+python_kuhn_poker
+python_liars_poker
+python_pokerkit_wrapper
+python_pokerkit_wrapper_acpc_style
+python_repeated_pokerkit
+python_team_dominoes
+python_tic_tac_toe
+quoridor
+rbc
+repeated_game
+repeated_leduc_poker
+restricted_nash_response
+sheriff
+shogi
+shogi_proxy
+skat
+snake
+snake_proxy
+social_deduction
+solitaire
+spades
+start_at
+stones_and_gems
+tarok
+tic_tac_toe
+tiny_bridge_2p
+tiny_bridge_4p
+tiny_hanabi
+trade_comm
+turn_based_simultaneous_game
+twixt
+ultimate_tic_tac_toe
+ultimate_tic_tac_toe_proxy
+xiangqi
+y
+y_proxy
+yacht
+zerosum
+OpenSpiel exception: Unknown game 'repeated_poker'. Available games are:
+2048
+add_noise
+amazons
+amazons_proxy
+ant_foraging_arena
+antichess
+backgammon
+backgammon_proxy
+banqi
+bargaining
+bargaining_proxy
+battleship
+blackjack
+blotto
+breakthrough
+breakthrough_proxy
+bridge
+bridge_arena
+bridge_uncontested_bidding
+cached_tree
+capture_the_flag
+capture_the_flag_proxy
+catch
+chat_game
+checkers
+checkers_proxy
+chess
+chinese_checkers
+cliff_walking
+clobber
+clobber_proxy
+coin_game
+coin_game_arena
+coin_game_proxy
+colored_trails
+connect_four
+connect_four_proxy
+coop_box_pushing
+coop_to_1p
+coordinated_mp
+crazy_eights
+crazyhouse
+cribbage
+crossword
+cursor_go
+dark_chess
+dark_hex
+dark_hex_ir
+dark_hex_proxy
+deep_sea
+dots_and_boxes
+dots_and_boxes_proxy
+dou_dizhu
+efg_game
+einstein_wurfelt_nicht
+euchre
+first_sealed_auction
+gin_rummy
+gin_rummy_proxy
+go
+go_fish
+go_fish_proxy
+go_proxy
+gomoku
+goofspiel
+havannah
+havannah_proxy
+hearts
+hex
+hive
+hive_proxy
+kriegspiel
+kuhn_poker
+laser_tag
+latent_ttt
+leduc_poker
+lewis_signaling
+liars_dice
+liars_dice_ir
+lines_of_action
+lines_of_action_proxy
+maedn
+mancala
+mancala_proxy
+markov_soccer
+markov_soccer_proxy
+matching_pennies_3p
+matrix_bos
+matrix_brps
+matrix_cd
+matrix_coordination
+matrix_mp
+matrix_pd
+matrix_rps
+matrix_rpsw
+matrix_sh
+matrix_shapleys_game
+mfg_crowd_modelling
+mfg_crowd_modelling_2d
+mfg_dynamic_routing
+mfg_garnet
+misere
+mnk
+morpion_solitaire
+negotiation
+negotiation_proxy
+nfg_game
+nim
+nine_mens_morris
+nine_mens_morris_proxy
+normal_form_extensive_game
+oh_hell
+oshi_zumo
+oshi_zumo_proxy
+othello
+othello_proxy
+oware
+pathfinding
+pentago
+phantom_go
+phantom_ttt
+phantom_ttt_ir
+pig
+python_ant_foraging
+python_ant_foraging_proxy
+python_block_dominoes
+python_dynamic_routing
+python_hangman
+python_iterated_prisoners_dilemma
+python_kuhn_poker
+python_liars_poker
+python_pokerkit_wrapper
+python_pokerkit_wrapper_acpc_style
+python_repeated_pokerkit
+python_team_dominoes
+python_tic_tac_toe
+quoridor
+rbc
+repeated_game
+repeated_leduc_poker
+restricted_nash_response
+sheriff
+shogi
+shogi_proxy
+skat
+snake
+snake_proxy
+social_deduction
+solitaire
+spades
+start_at
+stones_and_gems
+tarok
+tic_tac_toe
+tiny_bridge_2p
+tiny_bridge_4p
+tiny_hanabi
+trade_comm
+turn_based_simultaneous_game
+twixt
+ultimate_tic_tac_toe
+ultimate_tic_tac_toe_proxy
+xiangqi
+y
+y_proxy
+yacht
+zerosum
+Round robin: 11 variants, 55 matches, 720 steps each
+  a: (baseline, no overrides)
+  b: {'ANIMAL_CASH_FRACTION': 0.55, 'ANIMAL_CASH_RESERVE': 400}
+  c: {'ANIMAL_CASH_FRACTION': 0.15, 'ANIMAL_CASH_RESERVE': 1200}
+  d: {'MIN_DAY_FOR_FIRST_EXPANSION': 4, 'EXPANSION_UTILIZATION_THRESHOLD': 0.55}
+  e: {'MIN_DAY_FOR_FIRST_EXPANSION': 20, 'EXPANSION_UTILIZATION_THRESHOLD': 0.9}
+  f: {'HIRE_TRIGGER_LOGIC': {'capacity_per_unit': 3, 'max_hires': 8}}
+  g: {'HIRE_TRIGGER_LOGIC': {'capacity_per_unit': 10, 'max_hires': 3}}
+  h: {'TASK_SCORE_WEIGHTS': {'urgency': 200.0, 'value': 3.8, 'distance': 12.0}}
+  i: {'TASK_SCORE_WEIGHTS': {'urgency': 155.0, 'value': 8.0, 'distance': 3.0}}
+  j: {'CROP_TARGET_WEIGHT': {'WHEAT': 1.5, 'CARROT': 0.3, 'TOMATO': 0.2, 'MELON': 3.0, 'STRAWBERRY': 1.0}}
+  k: {'CROP_TARGET_WEIGHT': {'WHEAT': 1.5, 'CARROT': 0.3, 'TOMATO': 0.2, 'MELON': 3.0, 'STRAWBERRY': 1.0}, 'TASK_SCORE_WEIGHTS': {'urgency': 155.0, 'value': 8.0, 'distance': 3.0}}
+
+[1/55] a vs b: 16791 - 19673  (b beats a, 2.7s)
+[2/55] a vs c: 18515 - 19080  (c beats a, 2.7s)
+[3/55] a vs d: 18563 - 18744  (d beats a, 2.8s)
+[4/55] a vs e: 17679 - 16744  (a beats e, 2.9s)
+[5/55] a vs f: 11912 - 13494  (f beats a, 2.9s)
+[6/55] a vs g: 21957 - 20111  (a beats g, 2.6s)
+[7/55] a vs h: 10051 - 13941  (h beats a, 3.5s)
+[8/55] a vs i: 10994 - 21450  (i beats a, 2.7s)
+[9/55] a vs j: 20451 - 24091  (j beats a, 2.6s)
+[10/55] a vs k: 16688 - 23222  (k beats a, 2.7s)
+[11/55] b vs c: 17780 - 10285  (b beats c, 2.8s)
+[12/55] b vs d: 19548 - 18933  (b beats d, 2.7s)
+[13/55] b vs e: 19145 - 19127  (b beats e, 2.7s)
+[14/55] b vs f: 18907 - 14069  (b beats f, 2.8s)
+[15/55] b vs g: 19975 - 15116  (b beats g, 2.5s)
+[16/55] b vs h: 9285 - 10502  (h beats b, 2.6s)
+[17/55] b vs i: 10378 - 21186  (i beats b, 2.7s)
+[18/55] b vs j: 18444 - 23530  (j beats b, 2.8s)
+[19/55] b vs k: 19449 - 26746  (k beats b, 3.0s)
+[20/55] c vs d: 17663 - 18503  (d beats c, 2.7s)
+[21/55] c vs e: 18797 - 18797  (c draws e, 2.7s)
+[22/55] c vs f: 23955 - 8813  (c beats f, 3.0s)
+[23/55] c vs g: 21836 - 16155  (c beats g, 2.6s)
+[24/55] c vs h: 19733 - 12541  (c beats h, 2.7s)
+[25/55] c vs i: 9929 - 19652  (i beats c, 2.7s)
+[26/55] c vs j: 19219 - 23702  (j beats c, 2.7s)
+[27/55] c vs k: 20758 - 23544  (k beats c, 2.7s)
+[28/55] d vs e: 17278 - 17361  (e beats d, 2.7s)
+[29/55] d vs f: 11759 - 7015  (d beats f, 3.0s)
+[30/55] d vs g: 20026 - 17113  (d beats g, 2.6s)
+[31/55] d vs h: 14254 - 9387  (d beats h, 2.6s)
+[32/55] d vs i: 18049 - 23097  (i beats d, 2.7s)
+[33/55] d vs j: 18601 - 21058  (j beats d, 2.8s)
+[34/55] d vs k: 16081 - 25412  (k beats d, 2.7s)
+[35/55] e vs f: 12847 - 14095  (f beats e, 2.9s)
+[36/55] e vs g: 19363 - 19150  (e beats g, 2.7s)
+[37/55] e vs h: 8906 - 10024  (h beats e, 2.6s)
+[38/55] e vs i: 19527 - 19311  (e beats i, 2.8s)
+[39/55] e vs j: 17475 - 22833  (j beats e, 2.8s)
+[40/55] e vs k: 19323 - 23187  (k beats e, 2.9s)
+[41/55] f vs g: 11147 - 17550  (g beats f, 3.2s)
+[42/55] f vs h: 8540 - 12473  (h beats f, 3.1s)
+[43/55] f vs i: 17333 - 17262  (f beats i, 3.8s)
+[44/55] f vs j: 11097 - 23096  (j beats f, 3.4s)
+[45/55] f vs k: 7398 - 24207  (k beats f, 3.6s)
+[46/55] g vs h: 14897 - 9598  (g beats h, 2.9s)
+[47/55] g vs i: 15860 - 13993  (g beats i, 2.8s)
+[48/55] g vs j: 16906 - 13502  (g beats j, 2.8s)
+[49/55] g vs k: 16229 - 22919  (k beats g, 2.8s)
+[50/55] h vs i: 13377 - 19677  (i beats h, 3.2s)
+[51/55] h vs j: 10138 - 22495  (j beats h, 3.6s)
+[52/55] h vs k: 19527 - 11158  (h beats k, 3.2s)
+[53/55] i vs j: 15209 - 23042  (j beats i, 3.1s)
+[54/55] i vs k: 18575 - 23461  (k beats i, 2.7s)
+[55/55] j vs k: 24205 - 17801  (j beats k, 2.7s)
+
+--- Standings (win=3, draw=1, loss=0) ---
+rank variant points   W   D   L   money_margin
+   1       j     27   9   0   1          56213
+   2       k     24   8   0   2          43424
+   3       b     18   6   0   4          -3701
+   4       i     15   5   0   5          27462
+   5       d     15   5   0   5          -3989
+   6       h     15   5   0   5         -17488
+   7       c     13   4   1   5           3253
+   8       g     12   4   0   6          -5229
+   9       e     10   3   1   6         -12029
+  10       f      9   3   0   7         -60967
+  11       a      6   2   0   8         -26949
+
+--- Matchup grid (row's reward vs column) ---
+            a       b       c       d       e       f       g       h       i       j       k
+   a       --   16791   18515   18563   17679   11912   21957   10051   10994   20451   16688
+   b    19673      --   17780   19548   19145   18907   19975    9285   10378   18444   19449
+   c    19080   10285      --   17663   18797   23955   21836   19733    9929   19219   20758
+   d    18744   18933   18503      --   17278   11759   20026   14254   18049   18601   16081
+   e    16744   19127   18797   17361      --   12847   19363    8906   19527   17475   19323
+   f    13494   14069    8813    7015   14095      --   11147    8540   17333   11097    7398
+   g    20111   15116   16155   17113   19150   17550      --   14897   15860   16906   16229
+   h    13941   10502   12541    9387   10024   12473    9598      --   13377   10138   19527
+   i    21450   21186   19652   23097   19311   17262   13993   19677      --   15209   18575
+   j    24091   23530   23702   21058   22833   23096   13502   22495   23042      --   24205
+   k    23222   26746   23544   25412   23187   24207   22919   11158   23461   17801      --

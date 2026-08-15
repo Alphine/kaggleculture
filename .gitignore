@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.claude/
+.mcp.json
+
+# Downloaded Kaggle replay data — large (900MB+), regeneratable via
+# `kaggle competitions replay <episode_id>`, findings already captured in
+# NOTES.md's per-version narrative.
+replays/

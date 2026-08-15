@@ -1,0 +1,419 @@
+OpenSpiel exception: Unknown game 'universal_poker'. Available games are:
+2048
+add_noise
+amazons
+amazons_proxy
+ant_foraging_arena
+antichess
+backgammon
+backgammon_proxy
+banqi
+bargaining
+bargaining_proxy
+battleship
+blackjack
+blotto
+breakthrough
+breakthrough_proxy
+bridge
+bridge_arena
+bridge_uncontested_bidding
+cached_tree
+capture_the_flag
+capture_the_flag_proxy
+catch
+chat_game
+checkers
+checkers_proxy
+chess
+chinese_checkers
+cliff_walking
+clobber
+clobber_proxy
+coin_game
+coin_game_arena
+coin_game_proxy
+colored_trails
+connect_four
+connect_four_proxy
+coop_box_pushing
+coop_to_1p
+coordinated_mp
+crazy_eights
+crazyhouse
+cribbage
+crossword
+cursor_go
+dark_chess
+dark_hex
+dark_hex_ir
+dark_hex_proxy
+deep_sea
+dots_and_boxes
+dots_and_boxes_proxy
+dou_dizhu
+efg_game
+einstein_wurfelt_nicht
+euchre
+first_sealed_auction
+gin_rummy
+gin_rummy_proxy
+go
+go_fish
+go_fish_proxy
+go_proxy
+gomoku
+goofspiel
+havannah
+havannah_proxy
+hearts
+hex
+hive
+hive_proxy
+kriegspiel
+kuhn_poker
+laser_tag
+latent_ttt
+leduc_poker
+lewis_signaling
+liars_dice
+liars_dice_ir
+lines_of_action
+lines_of_action_proxy
+maedn
+mancala
+mancala_proxy
+markov_soccer
+markov_soccer_proxy
+matching_pennies_3p
+matrix_bos
+matrix_brps
+matrix_cd
+matrix_coordination
+matrix_mp
+matrix_pd
+matrix_rps
+matrix_rpsw
+matrix_sh
+matrix_shapleys_game
+mfg_crowd_modelling
+mfg_crowd_modelling_2d
+mfg_dynamic_routing
+mfg_garnet
+misere
+mnk
+morpion_solitaire
+negotiation
+negotiation_proxy
+nfg_game
+nim
+nine_mens_morris
+nine_mens_morris_proxy
+normal_form_extensive_game
+oh_hell
+oshi_zumo
+oshi_zumo_proxy
+othello
+othello_proxy
+oware
+pathfinding
+pentago
+phantom_go
+phantom_ttt
+phantom_ttt_ir
+pig
+python_ant_foraging
+python_ant_foraging_proxy
+python_block_dominoes
+python_dynamic_routing
+python_hangman
+python_iterated_prisoners_dilemma
+python_kuhn_poker
+python_liars_poker
+python_pokerkit_wrapper
+python_pokerkit_wrapper_acpc_style
+python_repeated_pokerkit
+python_team_dominoes
+python_tic_tac_toe
+quoridor
+rbc
+repeated_game
+repeated_leduc_poker
+restricted_nash_response
+sheriff
+shogi
+shogi_proxy
+skat
+snake
+snake_proxy
+social_deduction
+solitaire
+spades
+start_at
+stones_and_gems
+tarok
+tic_tac_toe
+tiny_bridge_2p
+tiny_bridge_4p
+tiny_hanabi
+trade_comm
+turn_based_simultaneous_game
+twixt
+ultimate_tic_tac_toe
+ultimate_tic_tac_toe_proxy
+xiangqi
+y
+y_proxy
+yacht
+zerosum
+OpenSpiel exception: Unknown game 'repeated_poker'. Available games are:
+2048
+add_noise
+amazons
+amazons_proxy
+ant_foraging_arena
+antichess
+backgammon
+backgammon_proxy
+banqi
+bargaining
+bargaining_proxy
+battleship
+blackjack
+blotto
+breakthrough
+breakthrough_proxy
+bridge
+bridge_arena
+bridge_uncontested_bidding
+cached_tree
+capture_the_flag
+capture_the_flag_proxy
+catch
+chat_game
+checkers
+checkers_proxy
+chess
+chinese_checkers
+cliff_walking
+clobber
+clobber_proxy
+coin_game
+coin_game_arena
+coin_game_proxy
+colored_trails
+connect_four
+connect_four_proxy
+coop_box_pushing
+coop_to_1p
+coordinated_mp
+crazy_eights
+crazyhouse
+cribbage
+crossword
+cursor_go
+dark_chess
+dark_hex
+dark_hex_ir
+dark_hex_proxy
+deep_sea
+dots_and_boxes
+dots_and_boxes_proxy
+dou_dizhu
+efg_game
+einstein_wurfelt_nicht
+euchre
+first_sealed_auction
+gin_rummy
+gin_rummy_proxy
+go
+go_fish
+go_fish_proxy
+go_proxy
+gomoku
+goofspiel
+havannah
+havannah_proxy
+hearts
+hex
+hive
+hive_proxy
+kriegspiel
+kuhn_poker
+laser_tag
+latent_ttt
+leduc_poker
+lewis_signaling
+liars_dice
+liars_dice_ir
+lines_of_action
+lines_of_action_proxy
+maedn
+mancala
+mancala_proxy
+markov_soccer
+markov_soccer_proxy
+matching_pennies_3p
+matrix_bos
+matrix_brps
+matrix_cd
+matrix_coordination
+matrix_mp
+matrix_pd
+matrix_rps
+matrix_rpsw
+matrix_sh
+matrix_shapleys_game
+mfg_crowd_modelling
+mfg_crowd_modelling_2d
+mfg_dynamic_routing
+mfg_garnet
+misere
+mnk
+morpion_solitaire
+negotiation
+negotiation_proxy
+nfg_game
+nim
+nine_mens_morris
+nine_mens_morris_proxy
+normal_form_extensive_game
+oh_hell
+oshi_zumo
+oshi_zumo_proxy
+othello
+othello_proxy
+oware
+pathfinding
+pentago
+phantom_go
+phantom_ttt
+phantom_ttt_ir
+pig
+python_ant_foraging
+python_ant_foraging_proxy
+python_block_dominoes
+python_dynamic_routing
+python_hangman
+python_iterated_prisoners_dilemma
+python_kuhn_poker
+python_liars_poker
+python_pokerkit_wrapper
+python_pokerkit_wrapper_acpc_style
+python_repeated_pokerkit
+python_team_dominoes
+python_tic_tac_toe
+quoridor
+rbc
+repeated_game
+repeated_leduc_poker
+restricted_nash_response
+sheriff
+shogi
+shogi_proxy
+skat
+snake
+snake_proxy
+social_deduction
+solitaire
+spades
+start_at
+stones_and_gems
+tarok
+tic_tac_toe
+tiny_bridge_2p
+tiny_bridge_4p
+tiny_hanabi
+trade_comm
+turn_based_simultaneous_game
+twixt
+ultimate_tic_tac_toe
+ultimate_tic_tac_toe_proxy
+xiangqi
+y
+y_proxy
+yacht
+zerosum
+Round robin: 10 variants, 45 matches, 720 steps each
+  a: (baseline, no overrides)
+  b: {'ANIMAL_CASH_FRACTION': 0.55, 'ANIMAL_CASH_RESERVE': 400}
+  c: {'ANIMAL_CASH_FRACTION': 0.15, 'ANIMAL_CASH_RESERVE': 1200}
+  d: {'MIN_DAY_FOR_FIRST_EXPANSION': 4, 'EXPANSION_UTILIZATION_THRESHOLD': 0.55}
+  e: {'MIN_DAY_FOR_FIRST_EXPANSION': 20, 'EXPANSION_UTILIZATION_THRESHOLD': 0.9}
+  f: {'HIRE_TRIGGER_LOGIC': {'capacity_per_unit': 3, 'max_hires': 8}}
+  g: {'HIRE_TRIGGER_LOGIC': {'capacity_per_unit': 10, 'max_hires': 3}}
+  h: {'TASK_SCORE_WEIGHTS': {'urgency': 200.0, 'value': 3.8, 'distance': 12.0}}
+  i: {'TASK_SCORE_WEIGHTS': {'urgency': 155.0, 'value': 8.0, 'distance': 3.0}}
+  j: {'CROP_TARGET_WEIGHT': {'WHEAT': 1.5, 'CARROT': 0.3, 'TOMATO': 0.2, 'MELON': 3.0, 'STRAWBERRY': 1.0}}
+
+[1/45] a vs b: 6930 - 20355  (b beats a, 2.7s)
+[2/45] a vs c: 20456 - 20518  (c beats a, 2.7s)
+[3/45] a vs d: 19826 - 19798  (a beats d, 2.7s)
+[4/45] a vs e: 19224 - 19224  (a draws e, 2.7s)
+[5/45] a vs f: 9319 - 9379  (f beats a, 2.9s)
+[6/45] a vs g: 17561 - 14234  (a beats g, 2.6s)
+[7/45] a vs h: 12851 - 25309  (h beats a, 2.7s)
+[8/45] a vs i: 9839 - 17864  (i beats a, 2.6s)
+[9/45] a vs j: 17888 - 22865  (j beats a, 2.7s)
+[10/45] b vs c: 18954 - 19433  (c beats b, 2.7s)
+[11/45] b vs d: 18102 - 18022  (b beats d, 2.7s)
+[12/45] b vs e: 18988 - 18818  (b beats e, 2.7s)
+[13/45] b vs f: 10827 - 18015  (f beats b, 3.0s)
+[14/45] b vs g: 20176 - 16048  (b beats g, 2.6s)
+[15/45] b vs h: 11186 - 10338  (b beats h, 2.6s)
+[16/45] b vs i: 9406 - 12093  (i beats b, 2.7s)
+[17/45] b vs j: 16975 - 23350  (j beats b, 2.7s)
+[18/45] c vs d: 17825 - 20010  (d beats c, 2.8s)
+[19/45] c vs e: 19240 - 18006  (c beats e, 2.9s)
+[20/45] c vs f: 11961 - 11561  (c beats f, 3.1s)
+[21/45] c vs g: 21421 - 15255  (c beats g, 2.7s)
+[22/45] c vs h: 18885 - 10412  (c beats h, 2.7s)
+[23/45] c vs i: 17038 - 21325  (i beats c, 2.9s)
+[24/45] c vs j: 19959 - 23881  (j beats c, 2.7s)
+[25/45] d vs e: 19239 - 19239  (d draws e, 2.7s)
+[26/45] d vs f: 12192 - 16582  (f beats d, 2.9s)
+[27/45] d vs g: 18647 - 16993  (d beats g, 2.7s)
+[28/45] d vs h: 7487 - 7759  (h beats d, 2.6s)
+[29/45] d vs i: 11750 - 11060  (d beats i, 2.7s)
+[30/45] d vs j: 16940 - 22228  (j beats d, 2.9s)
+[31/45] e vs f: 11285 - 19090  (f beats e, 3.3s)
+[32/45] e vs g: 21125 - 16554  (e beats g, 2.7s)
+[33/45] e vs h: 11323 - 7189  (e beats h, 2.7s)
+[34/45] e vs i: 10368 - 18733  (i beats e, 3.0s)
+[35/45] e vs j: 15233 - 22880  (j beats e, 2.8s)
+[36/45] f vs g: 11714 - 15556  (g beats f, 2.7s)
+[37/45] f vs h: 13353 - 12176  (f beats h, 2.8s)
+[38/45] f vs i: 11076 - 12850  (i beats f, 3.0s)
+[39/45] f vs j: 11806 - 28655  (j beats f, 2.9s)
+[40/45] g vs h: 16573 - 12141  (g beats h, 2.6s)
+[41/45] g vs i: 15069 - 18531  (i beats g, 2.7s)
+[42/45] g vs j: 13534 - 15085  (j beats g, 2.7s)
+[43/45] h vs i: 13712 - 16211  (i beats h, 2.7s)
+[44/45] h vs j: 16474 - 22099  (j beats h, 2.7s)
+[45/45] i vs j: 16943 - 25705  (j beats i, 2.8s)
+
+--- Standings (win=3, draw=1, loss=0) ---
+rank variant points   W   D   L   money_margin
+   1       j     27   9   0   0          60996
+   2       i     21   7   0   2          21647
+   3       c     18   6   0   3           6420
+   4       b     15   5   0   4           1922
+   5       f     15   5   0   4          -2245
+   6       d     10   3   1   5          -5529
+   7       e      8   2   2   5         -16516
+   8       a      7   2   1   6         -35652
+   9       h      6   2   0   7         -14458
+  10       g      6   2   0   7         -16585
+
+--- Matchup grid (row's reward vs column) ---
+            a       b       c       d       e       f       g       h       i       j
+   a       --    6930   20456   19826   19224    9319   17561   12851    9839   17888
+   b    20355      --   18954   18102   18988   10827   20176   11186    9406   16975
+   c    20518   19433      --   17825   19240   11961   21421   18885   17038   19959
+   d    19798   18022   20010      --   19239   12192   18647    7487   11750   16940
+   e    19224   18818   18006   19239      --   11285   21125   11323   10368   15233
+   f     9379   18015   11561   16582   19090      --   11714   13353   11076   11806
+   g    14234   16048   15255   16993   16554   15556      --   16573   15069   13534
+   h    25309   10338   10412    7759    7189   12176   12141      --   13712   16474
+   i    17864   12093   21325   11060   18733   12850   18531   16211      --   16943
+   j    22865   23350   23881   22228   22880   28655   15085   22099   25705      --

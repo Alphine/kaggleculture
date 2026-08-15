@@ -2225,3 +2225,91 @@ compiles clean.
 
 **Update:** submitted as `v28` (id `55522346`), `PENDING`. 2 submissions
 remaining today.
+
+## "Rocket Turtle" Monte Carlo experiment — large-scale numeric-weight search on Kaggle Notebooks, and why its best candidate got rejected
+
+Built a self-contained Kaggle Notebook (`kaggriculture-rocket-turtle-monte-carlo`, 3 parallel copies with different RNG seeds, GPU deliberately OFF since this workload is pure Python game-logic with no tensor math to accelerate — multiprocessing across every CPU core is the real lever) that embeds a FROZEN, read-only copy of the battle-tested agent and Monte Carlo-searches `TASK_SCORE_WEIGHTS`/`HOLD_FLOOR_PCT`/`PHASE_DAY_BOUNDARIES` (same space as `tools/tune.py`), each candidate evaluated head-to-head against the frozen baseline (8 episodes) plus both scripted opponents (3 episodes each). Kernel 1 completed 420 trials in 210 minutes using 4 workers.
+
+Top candidate ("trial 217": `urgency=207.6, value=0.50, distance=5.71`, `early_end=8, buildout_end=17, scale_end=26`, assorted hold-floors) reported a perfect 8/8 (100%) win rate vs the frozen baseline in the notebook, plus 100% vs both scripted opponents — looked like a clean win.
+
+**Re-validated locally with a larger, more decisive sample before touching config.py** (15 head-to-head episodes vs the current `kaggriculture` package, not just the notebook's 8): **20% win rate (3/15), avg margin -3,728 — trial 217 actually LOSES decisively to our own agent**, despite still going 10/10 against both scripted opponents and showing healthy money in a `pass` seed sweep (min $39,500, avg $41,449, no death spirals). It overfits hard to beating the two static single-quadrant scripted bots while trading away robustness against a real adaptive opponent — exactly the "local validation is necessary but not sufficient" lesson this project keeps re-learning, just now caught INSIDE the tuning process itself rather than only at the real-match stage. The notebook's 8-episode sample was too small to see this; 15 did.
+
+**Verdict: trial 217 NOT adopted.** `kaggriculture/config.py` was never touched. Kernels 2 and 3 (different seeds, same search space) still running — any of their top candidates need this same large-sample local re-validation (h2h vs the CURRENT real agent, not just the notebook's own small-sample numbers) before being considered, not a free pass just because the notebook reported a win.
+
+## Rocket Turtle, continued — kernels 2 and 3 finish (1,464 trials total), trial 351 survives large-sample scrutiny and gets adopted
+
+Kernels 2 (592 trials) and 3 (452 trials) completed, bringing the merged
+total across all 3 parallel kernels to 1,464 trials. Ranked all trials
+with `win_rate_vs_baseline == 1.0` (143 candidates) by margin — a strong
+reminder that testing 1,464 candidates against an 8-episode benchmark
+will produce a meaningful number of lucky false positives on pure chance
+alone (trial 217 was one), so the top-margin candidates still needed the
+same large-sample re-validation before trusting them.
+
+Re-tested the next 4 highest-margin candidates with 15 head-to-head
+episodes each vs the real v27/v28 code:
+
+| trial | notebook (n=8) | re-check (n=15) | verdict |
+|---|---|---|---|
+| k2/565 | 100% | 33.3%, margin -464 | REJECTED — overfit, same as 217 |
+| k2/513 | 100% | 20.0%, margin -816 | REJECTED — overfit |
+| k1/351 | 100% | **100%, margin +5,989** | survives |
+| k2/90  | 100% | 86.7%, margin +1,401 | survives, but weaker |
+
+**Trial 351** (`urgency=267.9, value=0.12, distance=8.19`,
+`early_end=6, buildout_end=9, scale_end=19`, hold-floors ~0.10-0.47)
+went further: a SECOND independent 30-episode h2h batch (different RNG
+draws) confirmed it at 29W-1L (96.7%, avg margin +5,332) — combined
+44W-1L across 45 total head-to-head episodes vs the real agent. Also
+15/15 vs `melon_focus_agent`, 15/15 vs `melon_animal_agent`, and a
+20-seed `pass` death-spiral sweep: 0/20 losses, min money
+$38,876/avg $43,043 — HIGHER than the baseline's own pass-sweep numbers
+(min ~$38k/avg ~$41k). An earlier crude "money touched <= $5 before day
+15" flag fired on 6/20 seeds and briefly looked like a death-spiral
+signal, but turned out to be a red herring: `hands` never collapsed
+(0/20 multi-day-zero streaks) and every seed still finished with
+excellent money — a transient, self-recovering pre-harvest cash dip
+(more frequent than baseline's own dip pattern, given the more
+compressed `early_end`/`buildout_end`), not the v7/v8-style spiral
+(cash crash -> hands stuck at 0 -> weeds compound -> real loss) that
+standard is meant to catch.
+
+**Applying trial 351's weights broke one existing unit test**
+(`test_critical_unwatered_plant_gets_dedicated_rescuer_over_big_harvests`):
+only 1 of 3 units harvested instead of 2. Traced the mechanism rather
+than just loosening the assertion: the critical-unwatered dedicated
+rescue stage (bypasses the scorer, guarantees exactly one rescuer via
+`num_rescuers = min(len(remaining_tiles), len(rescuer_pool))`) was
+working correctly, but the tile it claimed was never removed from the
+candidate pool `_build_candidates` hands to the SCORER for the
+remaining idle units — with trial 351's much higher `urgency` weight
+(267.9 vs the old 23.5), that same tile's ordinary WATER candidate could
+now outscore even a zero-distance ready HARVEST for a second unit too,
+pulling it toward an already-handled tile and abandoning an adjacent
+harvest for nothing. Old (low-urgency) weights never made this visible
+because the WATER candidate's score never got competitive enough to
+matter. Fixed by seeding the scorer's `assigned_tiles` exclusion set
+with every tile already claimed by a dedicated rescuer
+(`kaggriculture/farm_ops.py`, `UnitScheduler.assign()`) before the
+generic scoring pass runs, so a second unit can't redundantly re-target
+it. All 81 tests pass after the fix (no assertion needed loosening).
+
+**Applied to `kaggriculture/config.py`**: `TASK_SCORE_WEIGHTS`,
+`HOLD_FLOOR_PCT`, `PHASE_DAY_BOUNDARIES` replaced with trial 351's
+values (old values kept in a comment for reference), plus the
+rescue-tile-exclusion fix in `farm_ops.py`.
+
+**Final validation with both changes together:** 81 tests passing.
+10/10 vs `melon_focus_agent` (money $34,784-$41,580, up from prior
+~$26-27k), 10/10 vs `melon_animal_agent` (money $35,465-$40,238). 20-seed
+`pass` sweep: **0/20 zero-cash hits** (down from 6/20 with trial 351's
+weights alone — the rescue-exclusion fix also improved cash efficiency),
+min money **$34,702**, avg **$42,462**. `main.py` rebuilt, compiles
+clean.
+
+**Update:** submitted as `v29` (id `55527409`), `PENDING`. 1 submission
+remaining today. Also backed up the whole project to GitHub
+(`github.com/Alphine/kaggleculture`, SSH) as a separate ask this
+session — source, tests, tools, NOTES.md pushed; `replays/` (~1GB,
+regeneratable via the Kaggle API) intentionally excluded via
+`.gitignore`.

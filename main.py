@@ -333,19 +333,41 @@ ANIMAL_CASH_FRACTION = 0.45      # never commit more than this share of spendabl
 #                      "STRAWBERRY": 0.23, "MELON": 0.41, "EGG": 0.19,
 #                      "MILK": 0.26, "WOOL": 0.44, "FERTILIZER": 0.26}
 #   PHASE_DAY_BOUNDARIES = {"early_end": 3, "buildout_end": 17, "scale_end": 25}
+# v28 (Rocket Turtle): replaced by a Monte Carlo random search run on Kaggle
+# Notebooks (3 parallel CPU kernels, 1,464 trials total over the same numeric
+# space) head-to-head against the frozen v27/v28 battle-tested agent, not
+# just scripted opponents. The top notebook-reported candidate ("trial 217")
+# looked perfect (8/8 vs baseline in-notebook) but FAILED a larger 15-episode
+# local re-check (20% win rate) — a real overfitting trap, caught only
+# because every Monte Carlo winner gets re-validated locally with a bigger
+# sample before ever touching this file, the same "local validation is
+# necessary but not sufficient" lesson this whole project keeps re-learning.
+# "trial 351" (below) is the candidate that actually held up: 44W-1L across
+# 45 local head-to-head episodes vs the real v27/v28 code (avg margin
+# +5,332 to +5,989 across two independent batches), 15/15 vs
+# melon_focus_agent, 15/15 vs melon_animal_agent, and a 20-seed pass
+# death-spiral sweep with 0/20 losses and higher final money than the
+# baseline's own sweep (v28: min ~$38k/avg ~$41k -> trial 351: min
+# $38,876/avg $43,043) — the same v7/v8-style scrutiny every other risky
+# change in this project has required. Previous (v14-era) values, for
+# reference:
+#   TASK_SCORE_WEIGHTS = {"urgency": 23.55, "value": 0.36, "distance": 4.94}
+#   HOLD_FLOOR_PCT = {"WHEAT": 0.07, "CARROT": 0.59, "TOMATO": 0.24,
+#                      "STRAWBERRY": 0.28, "MELON": 0.01, "EGG": 0.05,
+#                      "MILK": 0.01, "WOOL": 0.01, "FERTILIZER": 0.47}
 TASK_SCORE_WEIGHTS = {
-    "urgency": 23.54745363071848,
-    "value": 0.3559324123632561,
-    "distance": 4.9360245884817004,
+    "urgency": 267.93499365170686,
+    "value": 0.12151756102775065,
+    "distance": 8.190117508314996,
 }
 
 # M3: hold floor as a fraction of base_price — below this, hold rather than
 # dump (SDD §5.4).
 HOLD_FLOOR_PCT = {
-    "WHEAT": 0.07009831424802637, "CARROT": 0.592236743821915, "TOMATO": 0.2364097314045229,
-    "STRAWBERRY": 0.2839619019897315, "MELON": 0.00821424471410085,
-    "EGG": 0.052511390096969285, "MILK": 0.011121232135362591, "WOOL": 0.008429312336436734,
-    "FERTILIZER": 0.46651116120049074,
+    "WHEAT": 0.4512889734486873, "CARROT": 0.14358744439767882, "TOMATO": 0.4728190201167587,
+    "STRAWBERRY": 0.44446017104042673, "MELON": 0.35628758946096095,
+    "EGG": 0.09151868795968718, "MILK": 0.10553728478104336, "WOOL": 0.4027069176022848,
+    "FERTILIZER": 0.10027308926985114,
 }
 
 # Spread large sells across turns instead of one giant SELL order (SDD §5.4):
@@ -430,9 +452,10 @@ FERTILIZER_BUY_CEILING_MULT = 1.5   # never pay more than this x base_price for 
 # critical-unfed animal present, and this ceiling collision is the
 # confirmed mechanism.
 WHEAT_FEED_BUY_CEILING_MULT = 4.0   # separate, much more generous ceiling — losing an animal costs far more than a pricey wheat top-up
-# v14: re-tuned alongside TASK_SCORE_WEIGHTS/HOLD_FLOOR_PCT above — see the
-# comment there for the full optuna run and generalization check.
-PHASE_DAY_BOUNDARIES = {"early_end": 4, "buildout_end": 20, "scale_end": 27}
+# v28 (Rocket Turtle): re-tuned alongside TASK_SCORE_WEIGHTS/HOLD_FLOOR_PCT
+# above — see the comment there for the Monte Carlo run and validation.
+# Compresses early/buildout noticeably vs the old (4, 20, 27) boundaries.
+PHASE_DAY_BOUNDARIES = {"early_end": 6, "buildout_end": 9, "scale_end": 19}
 
 # SDD §5.1 endgame liquidation: with this few days left, dump everything in
 # the shed regardless of hold floor — unsold inventory doesn't count toward
@@ -1637,6 +1660,15 @@ class UnitScheduler:
         # get honored below.
         critical_set = set(critical_unwatered)
         self._committed_rescues = {i: t for i, t in self._committed_rescues.items() if t in critical_set}
+        # v28: tiles claimed here get walked into `assigned_tiles` below so
+        # the generic scorer can't independently re-target the SAME tile
+        # with a second unit — found via a real weight-retune test failure
+        # (extreme urgency weights made the rescue tile's own WATER
+        # candidate outscore even a zero-distance ready HARVEST for OTHER
+        # idle units too, since `_build_candidates` has no idea this tile
+        # is already claimed): 2 units converging on 1 already-rescued
+        # tile while an adjacent ready melon sat unharvested.
+        rescued_tiles = set()
         if critical_unwatered and idle_units:
             remaining_tiles = list(critical_unwatered)
             rescuer_pool = list(idle_units)
@@ -1661,6 +1693,7 @@ class UnitScheduler:
                     rescuer_pool.remove(i)
                     remaining_tiles.remove(committed_tile)
                     idle_units.remove(i)
+                    rescued_tiles.add(committed_tile)
 
             num_rescuers = min(len(remaining_tiles), len(rescuer_pool))
             for _ in range(num_rescuers):
@@ -1675,6 +1708,7 @@ class UnitScheduler:
                 rescuer_pool.remove(i)
                 remaining_tiles.remove(t)
                 idle_units.remove(i)
+                rescued_tiles.add(t)
 
         if not idle_units:
             return actions
@@ -1719,7 +1753,7 @@ class UnitScheduler:
         pairs.sort(key=lambda p: p[0], reverse=True)
 
         assigned_units = set()
-        assigned_tiles = set()
+        assigned_tiles = set(rescued_tiles)
         # README: if too many units PLANT the same crop in one turn without
         # enough seed for all of them, NONE of those plants land — not just
         # the excess. Cap same-turn immediate PLANT actions (pos == tile_pos)

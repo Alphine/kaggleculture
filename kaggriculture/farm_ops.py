@@ -135,6 +135,15 @@ class UnitScheduler:
         # get honored below.
         critical_set = set(critical_unwatered)
         self._committed_rescues = {i: t for i, t in self._committed_rescues.items() if t in critical_set}
+        # v28: tiles claimed here get walked into `assigned_tiles` below so
+        # the generic scorer can't independently re-target the SAME tile
+        # with a second unit — found via a real weight-retune test failure
+        # (extreme urgency weights made the rescue tile's own WATER
+        # candidate outscore even a zero-distance ready HARVEST for OTHER
+        # idle units too, since `_build_candidates` has no idea this tile
+        # is already claimed): 2 units converging on 1 already-rescued
+        # tile while an adjacent ready melon sat unharvested.
+        rescued_tiles = set()
         if critical_unwatered and idle_units:
             remaining_tiles = list(critical_unwatered)
             rescuer_pool = list(idle_units)
@@ -159,6 +168,7 @@ class UnitScheduler:
                     rescuer_pool.remove(i)
                     remaining_tiles.remove(committed_tile)
                     idle_units.remove(i)
+                    rescued_tiles.add(committed_tile)
 
             num_rescuers = min(len(remaining_tiles), len(rescuer_pool))
             for _ in range(num_rescuers):
@@ -173,6 +183,7 @@ class UnitScheduler:
                 rescuer_pool.remove(i)
                 remaining_tiles.remove(t)
                 idle_units.remove(i)
+                rescued_tiles.add(t)
 
         if not idle_units:
             return actions
@@ -217,7 +228,7 @@ class UnitScheduler:
         pairs.sort(key=lambda p: p[0], reverse=True)
 
         assigned_units = set()
-        assigned_tiles = set()
+        assigned_tiles = set(rescued_tiles)
         # README: if too many units PLANT the same crop in one turn without
         # enough seed for all of them, NONE of those plants land — not just
         # the excess. Cap same-turn immediate PLANT actions (pos == tile_pos)

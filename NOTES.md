@@ -2462,5 +2462,58 @@ plan entirely, reallocated to WHEAT/CARROT instead. 10/10 vs
 zero-cash hits, min money $34,702 -> **$39,065**, avg $42,462 ->
 $42,273 (flat, no regression). `main.py` rebuilt, compiles clean.
 
-**Update:** submitted as `v30` (id `55539069`), `PENDING`. 4 submissions
-remaining today (quota reset).
+**Update:** submitted as `v30` (id `55539069`), `COMPLETE`, publicScore
+558.7. Pulled 30 public real episodes: 14W-16L (46.7%, matches v29's
+rate exactly) — but money is far more consistently healthy now (floor
+$22,279, was closer to $1k-14k in earlier versions' worst cases).
+
+Traced the newest most-extreme loss (0.35x, $36,710 vs $105,068):
+completely clean execution — hands stayed at 5, weeds under 6%, animals
+filled to 9, land utilization stayed reasonable (2-11 empty tiles, far
+better than the 34-38 seen in earlier extreme losses), money climbed
+steadily and healthily the entire game. **No bug found** — this is the
+long-standing CLEAN-BUT-OUTSCALED pattern, purely a scale/ambition gap
+now that v27-v30's fixes (structure placement, hire formula, price-crash
+backstop) have closed off the execution-bug losses that used to hide it.
+
+Leaderboard check: rank 2837/4644, score 608.5 — rank 10 sits at
+2972.0, rank 1 at 3221.6. The gap to any single-digit rank is roughly
+5x our current score; top-100 (~2800) is the more realistic near-term
+target, still needing several more multiples of real-match performance.
+
+## "Rocket Turtle goes Darwin" — evolutionary self-play, testing the long-flagged scale-up hypothesis under real competitive pressure instead of a manual guess
+
+Since v27-v30 closed the execution-bug losses and what remains is
+squarely the scale gap, and the Monte Carlo rounds' local-refinement
+search around trial 351 found nothing further (round 2, NOTES.md above),
+built a genuinely different search: EVOLUTIONARY SELF-PLAY instead of
+random search vs a frozen baseline. A population of 12 genomes plays
+each other directly every generation (`play_match`, 3 episodes/pairing);
+losers get replaced by a mutated copy of that pairing's winner; the
+current battle-tested v30 config is re-seeded into the population every
+generation as a fixed anchor (measurable against a real, known-good
+reference even as everything else evolves).
+
+Genome space deliberately widened beyond tune.py's numeric-weights-only
+scope to also include `ANIMAL_CASH_FRACTION`, `ANIMAL_CASH_RESERVE`, and
+`CROP_TARGET_WEIGHT` — directly reopening the "scale-up ambition"
+question flagged repeatedly since v15 (CLAUDE.md: "needs the same
+seed-sweep death-spiral testing v7/v8 required — flagged for an explicit
+decision, not changed unilaterally") to real competitive self-play
+pressure, rather than another manual guess. The one earlier scale-up
+attempt this session failed, but that was BEFORE the animal-capacity,
+hire-formula, and structure-placement bugs were fixed — this lets
+self-play re-litigate that question on the current, bug-fixed
+foundation.
+
+4 parallel Kaggle CPU kernels launched (`kaggriculture-evolve-selfplay-
+a/b/c/d`, distinct seeds, population 12, 3.5h budget each, GPU off —
+same reasoning as the Monte Carlo rounds, this is still pure Python
+game-logic simulation with no tensor math to accelerate). Smoke-tested
+locally first (6-genome population, 1 generation) to confirm the
+generational loop, mutation, and tournament logic all work correctly
+before spending real Kaggle compute. Results still pending — same
+validation discipline applies once they land: any winning genome needs
+a large-sample head-to-head vs the REAL current v30 agent (not just
+other self-play population members) before ever being considered for
+`kaggriculture/config.py`.

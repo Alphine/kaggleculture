@@ -167,10 +167,11 @@ def test_opponent_flooding_a_crop_reduces_its_relative_allocation():
 def test_no_opponent_flooding_allocates_by_crop_target_weight():
     """WHEAT and CARROT's raw profit-per-day scores are tied (7.5 each),
     but CROP_TARGET_WEIGHT intentionally biases WHEAT over CARROT
-    (config.py v9: 1.5 vs 0.3, a 5x gap) — calibrated against a local
-    round-robin tournament finding a MELON-concentrated, low-CARROT/TOMATO
-    portfolio dominant (NOTES.md "v9"). Without any opponent-flood signal,
-    allocation should follow that weight, not split evenly.
+    (config.py v31: 2.0 vs 0.3, a ~6.7x weight gap) — v9's original 5x
+    bias was recalibrated in v31 against the real #1-leaderboard team's
+    replays (NOTES.md "v31"), which showed a heavier sustained WHEAT
+    presence than our old weight gave it. Without any opponent-flood
+    signal, allocation should follow that weight, not split evenly.
 
     v15: run at day=10 (buildout, not early) so EARLY_PHASE_MELON_TILE_CAP's
     unconditional WHEAT top-up (NOTES.md "v15") doesn't mask the
@@ -180,7 +181,7 @@ def test_no_opponent_flooding_allocates_by_crop_target_weight():
     state = StateParser.parse(obs)
     plan = StrategyAgent().plan(state)
     ratio = plan.crop_targets["WHEAT"] / plan.crop_targets["CARROT"]
-    assert 4.0 <= ratio <= 6.0
+    assert 6.0 <= ratio <= 11.0
 
 
 def test_hire_count_zero_on_fully_watered_small_farm():

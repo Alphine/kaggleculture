@@ -2517,3 +2517,63 @@ validation discipline applies once they land: any winning genome needs
 a large-sample head-to-head vs the REAL current v30 agent (not just
 other self-play population members) before ever being considered for
 `kaggriculture/config.py`.
+
+## v31 — studied the #1-leaderboard team's actual replays directly, found a real structural gap, fixed it
+
+The classic `kaggle` CLI has no way to see another team's submissions —
+confirmed via `kaggle competitions submissions --help` (only ever shows
+your own). But the Kaggle MCP server (`kaggle.com/mcp`) exposes
+`list_team_public_submissions(teamId)` / `list_submission_episodes` /
+`get_episode_replay`, a genuinely different, newer API surface with its
+own auth. The interactive OAuth `authorize` tool failed outright in this
+client ("only compatible with certain clients" per its own docs) — but
+Kaggle's docs also list **token authentication** (a `KGAT`-prefixed
+personal token from Settings > Generate New Token, passed as an
+`Authorization: Bearer` header in `.mcp.json`), which worked after a
+session reconnect. `.mcp.json` is gitignored, so the token never risks
+being committed.
+
+Pulled 8 real replays of the rank-1 team (カワシギ, score ~3200+) via
+their public teamId, straight from `list_team_public_submissions`. Every
+single one showed the exact same deliberate, repeatable configuration —
+not per-game adaptation:
+
+- **11-12 hands every game** (tapering to 8 only during the final
+  liquidation days) vs our old hard cap of 5 — likely the single biggest
+  structural constraint on our own scale, given hire cost (fibonacci) is
+  cheap relative to the money scale everyone in these games operates at.
+- **STRAWBERRY-dominant portfolio (17-42 tiles) + WHEAT (15-38 tiles)**,
+  MELON essentially ABSENT (0 tiles in every game sampled) — the exact
+  opposite bias from our own MELON-concentrated `CROP_TARGET_WEIGHT`.
+- 14-18 animals (matches a much higher unit count via
+  `ANIMAL_CAPACITY_PER_UNIT`), and a deliberate hard liquidation dump in
+  the final 2-3 days (weeds allowed to spike, land left unreplanted,
+  since the season ending negates that cost) — final money $60k-$162k
+  depending on opponent strength, dwarfing our typical $30-50k ceiling.
+
+**Fix:** `HIRE_TRIGGER_LOGIC["max_hires"]`: 5 -> 12. This only raises the
+ceiling — `needed_units = ceil(actionable_tiles / capacity_per_unit)`
+still governs actual desired count, and `PRE_HARVEST_CASH_RESERVE`
+(the exact guard that already prevents v22/v23's hire-burst death
+spiral) still protects every purchase including HIRE from draining cash
+before day 10, unchanged. Also re-weighted `CROP_TARGET_WEIGHT`:
+STRAWBERRY 1.0 -> 3.0, MELON 3.0 -> 1.0, WHEAT 1.5 -> 2.0 (CARROT/TOMATO
+unchanged — only a small presence in every sampled game).
+
+**Validation:** 81 tests passing (one test's expected WHEAT:CARROT ratio
+updated to match the new intentional weight, not loosened arbitrarily).
+10/10 vs `melon_focus_agent` and `melon_animal_agent` (both scripted
+opponents' own money went UP noticeably, 2-6k -> 8-11k — since we no
+longer compete for MELON at all, we stop crashing ITS price against
+them; still won every game on our own diversified output). 20-seed
+`pass` sweep specifically tracking hands/animals: **0/20 zero-cash
+hits** (no death spiral), hands settle at **10** every seed (the
+capacity formula naturally lands there once `max_hires` stops
+artificially capping it at 5 — never actually hit the new ceiling of
+12), animals average **10.5** (up to 15, was ~9), min money
+$39,065 -> **$43,611**, avg $42,273 -> **$48,008** — the largest
+pass-sweep jump measured all session, on top of an already-strong v30.
+`main.py` rebuilt, compiles clean.
+
+**Update:** submitted as `v31` (id `55552092`), `PENDING`. 3 submissions
+remaining today.

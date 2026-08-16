@@ -97,12 +97,23 @@ CROP_PRIORITY_ORDER = ["WHEAT", "CARROT", "TOMATO", "MELON", "STRAWBERRY"]
 # a follow-up tournament combining this with a value-chasing scorer tweak
 # made things WORSE (lost head-to-head to the melon-only version directly),
 # so only the portfolio weight changed, not TASK_SCORE_WEIGHTS.
+#
+# v31: current #1-leaderboard team's replays (8 games via the Kaggle MCP
+# API's list_team_public_submissions, NOTES.md "v31") show an extremely
+# consistent, deliberate portfolio: STRAWBERRY 17-42 tiles + WHEAT 15-38
+# tiles as the two workhorses, MELON essentially ABSENT (0 tiles in every
+# game sampled), small CARROT presence. The complete opposite bias from
+# our own MELON-concentrated weights below, sustained across every single
+# game rather than a one-off. Re-weighted to match: STRAWBERRY up to
+# MELON's old weight, MELON down to STRAWBERRY's old weight, WHEAT bumped
+# slightly. Needs the same local validation discipline as any other
+# change before being trusted (see this comment's own history above).
 CROP_TARGET_WEIGHT = {
-    "WHEAT": 1.5,
+    "WHEAT": 2.0,
     "CARROT": 0.3,
     "TOMATO": 0.2,
-    "MELON": 3.0,
-    "STRAWBERRY": 1.0,
+    "MELON": 1.0,
+    "STRAWBERRY": 3.0,
 }
 
 # SDD §5.5: discount a crop's score per opponent tile already planted in it
@@ -188,7 +199,19 @@ MAX_WEED_RATIO_FOR_EXPANSION = 0.10
 # evidence.
 HIRE_TRIGGER_LOGIC = {
     "capacity_per_unit": 6,       # rough actionable-tiles one unit can cover per day
-    "max_hires": 5,
+    # v31: the current #1-leaderboard team runs 11-12 hands EVERY game
+    # (confirmed via 8 real replays pulled through the Kaggle MCP API,
+    # NOTES.md "v31") vs our old hard cap of 5 — likely the single biggest
+    # structural constraint on our own scale, given hire cost (fibonacci)
+    # is cheap relative to the money scale everyone in these games
+    # operates at. Raising the CEILING here doesn't force hiring past
+    # actual need (`needed_units = ceil(actionable_tiles / capacity_per_unit)`
+    # still governs desired count) or past affordability
+    # (PRE_HARVEST_CASH_RESERVE already guards every purchase, HIRE
+    # included, from draining cash below a safe floor before day 10 — the
+    # exact mechanism that made v22/v23's hire-burst death spiral
+    # possible in the first place, still in force here unchanged).
+    "max_hires": 12,
     # No cash-fraction cap here (there was one — see NOTES.md "v8" for why
     # it got removed: it created a vicious cycle where an animal-heavy cash
     # crunch cut off hiring exactly when hands were needed most to recover).

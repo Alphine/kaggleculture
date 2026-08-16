@@ -2613,3 +2613,51 @@ already-validated hire-capacity gain from `max_hires` alone. v31 as
 submitted (with the tactical value bug still present, but max_hires=12
 and the CROP_TARGET_WEIGHT rebalance both intact) remains the best
 validated state.
+
+## Top-team replay study, round 2 — 100 games (not just 8), strong statistical confirmation of v31's direction plus a new lead
+
+Pulled the rank-1 team's (カワシギ) next 100 real episodes
+via the same Kaggle MCP token-auth path (`list_submission_episodes` +
+classic `kaggle competitions replay` CLI for the actual downloads — a
+tight loop of ~50 sequential replay downloads hit a transient Kaggle API
+rate limit partway through, 12/50 silently failed with no error text
+surfaced through the `tail -1` pipe; confirmed NOT a permanent block by
+retrying the missing IDs individually with a 1s gap, all succeeded — a
+small delay between requests avoids it).
+
+**Aggregate stats across all 100 games** (`StateParser` sampled at every
+day's hour==23):
+
+- **83W-17L (83% win rate)** — genuinely elite, not just beating weak
+  opponents: 71-89% win rate specifically against OTHER real top-10
+  teams (Kostiantyn Isaienkov, Utkarsh #2, Ueddy), not padded by easy
+  matchups.
+- **max_hands: exactly 12 in ALL 100 games, zero variance.** Not an
+  estimate anymore — this is their fixed, deliberate ceiling, and it's
+  the EXACT value v31 already adopted (`HIRE_TRIGGER_LOGIC["max_hires"]
+  = 12`), strong direct confirmation that lever was pointed correctly.
+- **Animals: 14 in 82 games, 18 in the 18 games where they expanded to
+  a 4th quadrant** — scales with land, as expected.
+- **Crop portfolio at day 18 (aggregated across all games): STRAWBERRY
+  64.2%, WHEAT 35.8%, MELON 0.02%** (1 tile out of ~6,000 sampled) —
+  confirms v31's CROP_TARGET_WEIGHT rebalance direction with much higher
+  confidence than the original 8-game sample.
+- **MELON was planted at SOME point in 100/100 games** despite being
+  ~0% by day 18 — reconciles as a deliberate early-phase-only tactic:
+  MELON for fast early capital (matches our own `PHASE_CROP_POOL["early"]`
+  already including MELON), then a hard pivot to STRAWBERRY/WHEAT once
+  buildout starts, not a gradual blend.
+- **New lead: land expansion pace.** Hits 50 tiles (2nd quadrant) by
+  day 6 on average, 75 tiles (3rd quadrant) by day 11 — both notably
+  faster than our own `MIN_DAY_FOR_FIRST_EXPANSION = 7` /
+  `MIN_DAYS_BETWEEN_EXPANSIONS = 5` gates would even permit as a
+  theoretical floor. 18/100 games pushed to a 4th quadrant (100 tiles)
+  by ~day 12. Not yet tested — flagged as the next candidate investigation,
+  same validation discipline required (this pacing was originally
+  tightened specifically to prevent a real v16 cash-crash death spiral,
+  so any loosening needs the same seed-sweep scrutiny).
+
+Raw replay files for both 100-game batches deleted after this summary
+was written (findings preserved here; re-downloadable via
+`list_submission_episodes` + `kaggle competitions replay` if ever needed
+again) — freed ~2.9GB.

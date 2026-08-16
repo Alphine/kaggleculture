@@ -2575,5 +2575,41 @@ $39,065 -> **$43,611**, avg $42,273 -> **$48,008** — the largest
 pass-sweep jump measured all session, on top of an already-strong v30.
 `main.py` rebuilt, compiles clean.
 
-**Update:** submitted as `v31` (id `55552092`), `PENDING`. 3 submissions
-remaining today.
+**Update:** submitted as `v31` (id `55552092`), `COMPLETE`, publicScore
+514.6. Pulled 10 public real episodes: 4W-6L (40%, small sample — 3 of
+the 6 losses were near-ties at 0.90x-1.00x margin, a real improvement in
+competitiveness even where we still lost).
+
+## v31 (continued) — tried fixing STRAWBERRY's tactical under-planting, found it net-regressed, reverted
+
+Traced the worst v31 real loss and found `crop_targets` correctly
+wanting far more STRAWBERRY than MELON (v31's whole point), but actual
+plantings stayed stuck at MELON~20/STRAWBERRY~1 the entire game.
+Root-caused to `farm_ops.py`'s PLANT candidate `value` field
+(`base_price - seed_cost`) being completely disconnected from
+`CROP_TARGET_WEIGHT` — MELON's cheap seeds give it ~170, STRAWBERRY's
+expensive seeds give it only ~20, an 8.5x gap that swamped the 3x
+strategic weight bump, so MELON re-claimed every freed tile regardless
+of strategy.py's actual intent.
+
+Fixed by scaling PLANT value with `CROP_TARGET_WEIGHT x
+shortfall_ratio` instead of raw one-harvest profit — confirmed via a
+replay repro that STRAWBERRY's target/actual gap closed substantially.
+But a 20-seed `pass` sweep afterward showed a NET REGRESSION: max hands
+dropped from 10 back to 4-6, avg money $48,008 -> $31,030. Root cause
+not fully diagnosed before time ran out — working theory is that
+`_decide_hires`'s `actionable_tiles` proxy (empty tiles needing a
+NEW planting + unwatered existing plants) implicitly assumes a
+MELON-like "one_time" crop cycle that constantly frees new tiles
+needing replant; STRAWBERRY's "ongoing" repeat-harvest cycle needs far
+fewer replantings once established, so the same formula under-counts
+real workload for a STRAWBERRY-heavy portfolio even though the actual
+watering/harvesting/feeding demand hasn't dropped.
+
+**Verdict: reverted** (`git checkout -- kaggriculture/farm_ops.py
+tests/test_farm_ops.py`). The narrow STRAWBERRY-value bug is real and
+worth fixing properly later, but not at the cost of the much larger,
+already-validated hire-capacity gain from `max_hires` alone. v31 as
+submitted (with the tactical value bug still present, but max_hires=12
+and the CROP_TARGET_WEIGHT rebalance both intact) remains the best
+validated state.

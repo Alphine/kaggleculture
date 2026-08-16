@@ -112,6 +112,24 @@ CROP_TARGET_WEIGHT = {
 # enough (PHASE_ANIMAL_CAP) that flooding risk from either player is low.
 OPPONENT_FLOOD_PENALTY = 0.15
 
+# v29 (continued): OPPONENT_FLOOD_PENALTY and the market-momentum penalty
+# below are both PROXIES for an oversupplied crop — visible opponent tiles,
+# visible opponent growth rate, realized inventory trend. All three can
+# fade back toward zero (opponent stops planting, inventory gets sold down
+# elsewhere) while the crop's REALIZED PRICE stays crashed. Found via two
+# real-match blowout losses (0.12x, 0.21x margin): MELON crashed to $1-22
+# (base $250, ratio 0.004-0.09) at day 11; the opponent abandoned MELON
+# entirely by day 17 — silencing the flood-penalty proxy completely — but
+# we kept planting into the dead market through day 22 anyway, while the
+# opponent's money then quadrupled on a completely different portfolio.
+# This is a direct backstop using the crop's actual live price / base_price
+# ratio, independent of what any proxy currently reads. Only engages once
+# the price is deeply depressed (below this threshold) so normal daily
+# fluctuation never triggers it — a crop sitting exactly at the threshold
+# gets no discount, one crashed to near-zero gets discounted almost to
+# nothing.
+MARKET_PRICE_CRASH_THRESHOLD = 0.5
+
 EXPANSION_UTILIZATION_THRESHOLD = 0.70
 MIN_DAYS_REMAINING_FOR_EXPANSION = 8
 # Utilization alone can hit 70% within the first few days on a wide
@@ -1010,7 +1028,7 @@ def _classify_regime(state: GameState) -> str:
     return "neutral"
 
 
-def _score_crop(crop: str, opponent_counts: dict, opponent_growth: dict, market_momentum: dict) -> float:
+def _score_crop(crop: str, opponent_counts: dict, opponent_growth: dict, market_momentum: dict, price_ratio: float = 1.0) -> float:
     info = CROP_DATA[crop]
     # Expected profit per tile-day per action-cost (SDD §5.5), approximated
     # from the Object Types table: (base_price - seed_cost) amortized over
@@ -1050,6 +1068,16 @@ def _score_crop(crop: str, opponent_counts: dict, opponent_growth: dict, market_
     momentum = market_momentum.get(crop, 0.0)
     if momentum > 0:
         score /= 1 + momentum * MARKET_TREND_SURGE_PENALTY
+
+    # v29 (continued): direct realized-price backstop for the proxies
+    # above — see MARKET_PRICE_CRASH_THRESHOLD's config.py comment for the
+    # real-match evidence (opponent-visibility signals faded to zero once
+    # the opponent abandoned a crashed crop, but the crash itself hadn't
+    # recovered). Only engages once price has fallen deeply below the
+    # threshold; scales continuously down to near-zero as price approaches
+    # 0, and is a strict no-op at or above the threshold.
+    if price_ratio < MARKET_PRICE_CRASH_THRESHOLD:
+        score *= max(0.0, price_ratio) / MARKET_PRICE_CRASH_THRESHOLD
     return score
 
 
@@ -1068,13 +1096,19 @@ def _decide_crop_targets(state: GameState, phase: str, remaining_days: int, oppo
         return {}
 
     opponent_counts = _opponent_crop_counts(state)
+    # v29 (continued): realized live price / base_price per eligible crop —
+    # see MARKET_PRICE_CRASH_THRESHOLD's config.py comment.
+    price_ratios = {c: current_price(c, state) / CROP_DATA[c]["base_price"] for c in eligible}
     # Proportional allocation by score, not equal-shares-by-rank: a crop
     # scoring 2x another should get roughly 2x the tiles, not just "picked
     # first" for a +1 remainder tile. Every score is clamped to a small
     # positive floor so a crop that scores 0 (or negative, from a heavy
     # opponent-flood discount) still gets some minimal presence rather than
     # vanishing outright.
-    raw_scores = {c: max(0.01, _score_crop(c, opponent_counts, opponent_growth, market_momentum)) for c in eligible}
+    raw_scores = {
+        c: max(0.01, _score_crop(c, opponent_counts, opponent_growth, market_momentum, price_ratios[c]))
+        for c in eligible
+    }
     # v14: concentration_mult sharpens (>1, "behind" preset) or flattens
     # (<1, "ahead" preset) the allocation spread via a monotonic power
     # transform — preserves crop RANKING exactly, only changes how

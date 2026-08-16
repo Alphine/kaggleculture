@@ -31,6 +31,7 @@ from .config import (
     LAND_PURCHASE_ORDER,
     LIQUIDATION_DAYS_REMAINING,
     MARKET_PARAMS,
+    MARKET_PRICE_CRASH_THRESHOLD,
     MARKET_TREND_SELL_DISCOUNT,
     MARKET_TREND_SURGE_PENALTY,
     MARKET_TREND_SURGE_THRESHOLD,
@@ -57,6 +58,7 @@ from .config import (
     TOTAL_DAYS,
     YIELD_PER_TILE_PER_DAY,
 )
+from .market_model import current_price
 from .state import GameState, PlantTile, StructureTile, WeedTile
 
 
@@ -243,7 +245,7 @@ def _classify_regime(state: GameState) -> str:
     return "neutral"
 
 
-def _score_crop(crop: str, opponent_counts: dict, opponent_growth: dict, market_momentum: dict) -> float:
+def _score_crop(crop: str, opponent_counts: dict, opponent_growth: dict, market_momentum: dict, price_ratio: float = 1.0) -> float:
     info = CROP_DATA[crop]
     # Expected profit per tile-day per action-cost (SDD §5.5), approximated
     # from the Object Types table: (base_price - seed_cost) amortized over
@@ -283,6 +285,16 @@ def _score_crop(crop: str, opponent_counts: dict, opponent_growth: dict, market_
     momentum = market_momentum.get(crop, 0.0)
     if momentum > 0:
         score /= 1 + momentum * MARKET_TREND_SURGE_PENALTY
+
+    # v29 (continued): direct realized-price backstop for the proxies
+    # above — see MARKET_PRICE_CRASH_THRESHOLD's config.py comment for the
+    # real-match evidence (opponent-visibility signals faded to zero once
+    # the opponent abandoned a crashed crop, but the crash itself hadn't
+    # recovered). Only engages once price has fallen deeply below the
+    # threshold; scales continuously down to near-zero as price approaches
+    # 0, and is a strict no-op at or above the threshold.
+    if price_ratio < MARKET_PRICE_CRASH_THRESHOLD:
+        score *= max(0.0, price_ratio) / MARKET_PRICE_CRASH_THRESHOLD
     return score
 
 
@@ -301,13 +313,19 @@ def _decide_crop_targets(state: GameState, phase: str, remaining_days: int, oppo
         return {}
 
     opponent_counts = _opponent_crop_counts(state)
+    # v29 (continued): realized live price / base_price per eligible crop —
+    # see MARKET_PRICE_CRASH_THRESHOLD's config.py comment.
+    price_ratios = {c: current_price(c, state) / CROP_DATA[c]["base_price"] for c in eligible}
     # Proportional allocation by score, not equal-shares-by-rank: a crop
     # scoring 2x another should get roughly 2x the tiles, not just "picked
     # first" for a +1 remainder tile. Every score is clamped to a small
     # positive floor so a crop that scores 0 (or negative, from a heavy
     # opponent-flood discount) still gets some minimal presence rather than
     # vanishing outright.
-    raw_scores = {c: max(0.01, _score_crop(c, opponent_counts, opponent_growth, market_momentum)) for c in eligible}
+    raw_scores = {
+        c: max(0.01, _score_crop(c, opponent_counts, opponent_growth, market_momentum, price_ratios[c]))
+        for c in eligible
+    }
     # v14: concentration_mult sharpens (>1, "behind" preset) or flattens
     # (<1, "ahead" preset) the allocation spread via a monotonic power
     # transform — preserves crop RANKING exactly, only changes how

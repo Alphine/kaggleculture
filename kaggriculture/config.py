@@ -106,6 +106,24 @@ CROP_TARGET_WEIGHT = {
 # enough (PHASE_ANIMAL_CAP) that flooding risk from either player is low.
 OPPONENT_FLOOD_PENALTY = 0.15
 
+# v29 (continued): OPPONENT_FLOOD_PENALTY and the market-momentum penalty
+# below are both PROXIES for an oversupplied crop — visible opponent tiles,
+# visible opponent growth rate, realized inventory trend. All three can
+# fade back toward zero (opponent stops planting, inventory gets sold down
+# elsewhere) while the crop's REALIZED PRICE stays crashed. Found via two
+# real-match blowout losses (0.12x, 0.21x margin): MELON crashed to $1-22
+# (base $250, ratio 0.004-0.09) at day 11; the opponent abandoned MELON
+# entirely by day 17 — silencing the flood-penalty proxy completely — but
+# we kept planting into the dead market through day 22 anyway, while the
+# opponent's money then quadrupled on a completely different portfolio.
+# This is a direct backstop using the crop's actual live price / base_price
+# ratio, independent of what any proxy currently reads. Only engages once
+# the price is deeply depressed (below this threshold) so normal daily
+# fluctuation never triggers it — a crop sitting exactly at the threshold
+# gets no discount, one crashed to near-zero gets discounted almost to
+# nothing.
+MARKET_PRICE_CRASH_THRESHOLD = 0.5
+
 EXPANSION_UTILIZATION_THRESHOLD = 0.70
 MIN_DAYS_REMAINING_FOR_EXPANSION = 8
 # Utilization alone can hit 70% within the first few days on a wide

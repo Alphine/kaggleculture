@@ -2406,3 +2406,61 @@ config.py` stays as-is (v29, unchanged). Confirms the process is doing
 its job: catching overfit "wins" before they ever reach
 `kaggriculture/config.py`, even at the cost of a round that produced no
 usable improvement.
+
+## v29 (continued) — 30 real episodes pulled, 46.7% win rate, found and fixed a real crop-selection gap: opponent-visibility proxies can fade to zero while a crashed price never recovers
+
+Pulled 11 more real v29 episodes (30 total): 14W-16L (46.7%, down from
+the earlier 19-episode sample's 52.6% — normal convergence as more
+games land, and expected given the leaderboard rating keeps pulling in
+tougher real opponents as it moves up). Two of the newest losses were
+by far the most extreme margins seen all project — 0.12x ($15,089 vs
+$127,741) and 0.21x ($34,528 vs $164,618).
+
+Traced both day-by-day: our OWN execution was clean in both (hands
+stayed at 5, animals filled to 9, weeds stayed low) — but money nearly
+flatlined for 15+ days in the worse one ($13,538 -> $15,089, day 14 to
+29). First hypothesis (WHEAT stuck at 17-18 units unsold, hoarding due
+to trial 351's much higher `HOLD_FLOOR_PCT`) was checked and DISPROVEN
+by reading the actual sell-order code: `wheat_reserve =
+animal_count * 2` (9 animals -> 18) is a deliberate feed reserve,
+excluded from selling on purpose (README: animals need daily WHEAT) —
+not a hoarding bug at all, a correct guard already documented at v20.
+
+Checked MELON's live market price instead: it crashed from $99 (day 10)
+to $1-22 for the ENTIRE rest of both games (base price $250 — under
+10% of base). In the worse loss, the opponent's own visible MELON tile
+count dropped to 0 by day 17 (they read the crash and pivoted away
+entirely — their money then quadrupled on a completely different
+portfolio, $28,855 -> $127,741 in 12 days with zero MELON tiles). We
+kept 8 MELON tiles planted through day 22, five days into a market that
+had been sub-$22 (91%+ below base) the entire time.
+
+**Root cause:** `_score_crop` never looks at the crop's actual live
+market price at all — only three indirect proxies (visible opponent
+tile count, opponent growth rate, market inventory momentum). All three
+can fade back toward zero once the CAUSE of a crash goes away (the
+opponent stops planting, inventory gets sold down) while the price
+itself stays crashed. Confirmed directly: `opponent_counts.get('MELON')`
+hit 0 the moment the real opponent abandoned MELON, silencing the flood
+penalty completely, even though price was still at $1-7.
+
+**Fix:** added a direct realized-price backstop, independent of the
+existing proxies. `_decide_crop_targets` now computes
+`current_price(crop, state) / CROP_DATA[crop]["base_price"]` per
+eligible crop and passes it into `_score_crop`, which discounts the
+score continuously once price falls below `MARKET_PRICE_CRASH_THRESHOLD
+= 0.5` (a strict no-op at or above the threshold, scaling down toward
+zero as price approaches 0).
+
+**Validation:** 81 tests passing. Replay repro on the exact failing
+trajectory (episode-93431034): MELON's target now correctly shrinks
+with its crashing price — day15 (price $19): target 10; day17 ($7):
+target 5; day19 ($1): target 2; day21 ($7): target dropped out of the
+plan entirely, reallocated to WHEAT/CARROT instead. 10/10 vs
+`melon_focus_agent` (money $32-42k), 10/10 vs `melon_animal_agent`
+(money $34-51k, highest seen all session). 20-seed `pass` sweep: 0/20
+zero-cash hits, min money $34,702 -> **$39,065**, avg $42,462 ->
+$42,273 (flat, no regression). `main.py` rebuilt, compiles clean.
+
+**Update:** submitted as `v30` (id `55539069`), `PENDING`. 4 submissions
+remaining today (quota reset).
